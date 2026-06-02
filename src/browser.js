@@ -325,10 +325,10 @@ function checkSafeSpot(type, index, clickedButton) {
 
     if (!safe) {
         addChatMessage("");
-        addChatMessage("CORRECTED:");
+        addChatMessage("CORRECTIONS:");
 
-        addChatMessage(`Writer 1 Top: ${topWriter.getWriter1()}`);
-        addChatMessage(`Writer 1 Bottom: ${botWriter.getWriter1()}`);
+        addChatMessage(`Your Top: ${topWriter.getWriter1()}`);
+        addChatMessage(`Your Bottom: ${botWriter.getWriter1()}`);
         addChatSpacer();
 
         const correctedCombined =
@@ -337,6 +337,9 @@ function checkSafeSpot(type, index, clickedButton) {
 
         addChatMessage("");
         addChatMessage(`Combined: ${correctedCombined}`);
+        addChatMessage(`Number to ${eyesOpen ? "stand on" : "avoid"}: ${targetNumber}`);
+
+        addChatMessage(``)
     }
 
     disableSafeSpotSelection();
