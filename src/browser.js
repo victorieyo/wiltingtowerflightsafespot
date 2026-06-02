@@ -21,8 +21,11 @@ let currentRow = "top";
 let phase = "writer";
 let writer2Name = "";
 let roundFinished = false;
+let roundTimer = null;
+let timeLeft = 40;
 
 const eyeImage = document.getElementById("eyeImage");
+const timerText = document.getElementById("timerText");
 const romanImages = {
     1: img1,
     2: img2,
@@ -74,12 +77,32 @@ rowInput.addEventListener("keydown", (e) => {
     }
 });
 
-startNewRound();
+showInitialScreen();
+
+function showInitialScreen() {
+    rowInput.style.display = "none";
+    submitBtn.style.display = "none";
+    eyeImage.style.display = "none";
+
+    feedback.textContent = "";
+    timerText.textContent = "";
+
+    renderEmptyRow(topArena, "top");
+    renderEmptyRow(bottomArena, "bottom");
+}
 
 function startNewRound() {
+    newRoundBtn.textContent = "New Round";
+    clearInterval(roundTimer);
+
+    timeLeft = 40;
+    timerText.textContent = `Time Left: ${timeLeft}s`;
+    startRoundTimer();
+
     phase = "writer";
     roundFinished = false;
 
+    eyeImage.style.display = "block";
     rowInput.style.display = "block";
     submitBtn.style.display = "block";
 
@@ -235,7 +258,7 @@ function startCombinePhase() {
 function submitCombinedBoard() {
     const rawInput = rowInput.value.trim();
 
-    addChatMessage(`Combined: ${rawInput}`);
+    addChatMessage(`You Combined: ${rawInput}`);
     addChatMessage("=-=-=-=-=-=-=-=-=-=-=");
 
     startSafeSpotPhase();
@@ -312,7 +335,7 @@ function checkSafeSpot(type, index, clickedButton) {
         clickedButton.classList.add("safe-choice-wrong");
     }
 
-    feedback.textContent = safe ? "SAFE" : "DEAD";
+    feedback.textContent = safe ? "SAFE - SAFE SPOT" : "DEAD - UNSAFE SPOT";
     renderFullAnswerBoard(type, index, safe);
 
     addChatMessage(
@@ -324,24 +347,11 @@ function checkSafeSpot(type, index, clickedButton) {
     addChatSpacer();
 
     if (!safe) {
-        addChatMessage("");
-        addChatMessage("CORRECTIONS:");
-
-        addChatMessage(`Your Top: ${topWriter.getWriter1()}`);
-        addChatMessage(`Your Bottom: ${botWriter.getWriter1()}`);
-        addChatSpacer();
-
-        const correctedCombined =
-            `${combineRow(topWriter.getWriter1(), topWriter.getWriter2())} ` + " // " +
-            `${combineRow(botWriter.getWriter1(), botWriter.getWriter2())}`;
-
-        addChatMessage("");
-        addChatMessage(`Combined: ${correctedCombined}`);
-        addChatMessage(`Number to ${eyesOpen ? "stand on" : "avoid"}: ${targetNumber}`);
-
-        addChatMessage(``)
+        showCorrections();
     }
 
+    clearInterval(roundTimer);
+    roundTimer = null;
     disableSafeSpotSelection();
 }
 
@@ -397,4 +407,59 @@ function renderAnswerRow(arenaElement, row, type, selectedType, selectedIndex, s
 
         arenaElement.appendChild(platform);
     }
+}
+
+function startRoundTimer() {
+    clearInterval(roundTimer);
+
+    timeLeft = 40;
+    timerText.textContent = `Time Left: ${timeLeft}s`;
+
+    roundTimer = setInterval(() => {
+        timeLeft--;
+        timerText.textContent = `Time Left: ${timeLeft}s`;
+
+        if (timeLeft <= 0) {
+            clearInterval(roundTimer);
+            roundTimer = null;
+            handleRoundTimeout();
+        }
+    }, 1000);
+}
+
+function showCorrections() {
+    addChatMessage("");
+    addChatMessage("CORRECTIONS:");
+
+    addChatMessage(`Top: ${topWriter.getWriter1()}`);
+    addChatMessage(`Bottom: ${botWriter.getWriter1()}`);
+    addChatSpacer();
+
+    const correctedCombined =
+        `${combineRow(topWriter.getWriter1(), topWriter.getWriter2())} // ` +
+        `${combineRow(botWriter.getWriter1(), botWriter.getWriter2())}`;
+
+    addChatMessage("");
+    addChatMessage(`Combined: ${correctedCombined}`);
+    addChatMessage(`Number to ${eyesOpen ? "stand on" : "avoid"}: ${targetNumber}`);
+}
+
+function handleRoundTimeout() {
+    if (roundFinished) return;
+
+    roundFinished = true;
+
+    feedback.textContent = "DEAD - YOU RAN OUT OF TIME";
+    timerText.textContent = "TIME'S UP";
+
+    rowInput.style.display = "none";
+    submitBtn.style.display = "none";
+
+    addChatMessage("You ran out of time: DEAD");
+    addChatSpacer();
+
+    renderFullAnswerBoard(null, null, false);
+
+    showCorrections();
+    disableSafeSpotSelection();
 }
