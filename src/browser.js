@@ -66,7 +66,10 @@ const guildMembers = [
     "Hanso",
     "Eirian",
     "KimiSaru",
-    "MyeChu"
+    "MyeChu",
+    "evemorphs",
+    "HerculePoi",
+    "Zanika"
 ];
 
 newRoundBtn.addEventListener("click", startNewRound);
