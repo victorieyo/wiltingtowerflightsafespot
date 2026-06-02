@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>x113</title>
+</head>
+<body>
+<main class="app">
+  <h1>Wilting Tower: Flight Safe Spot</h1>
+
+  <button id="newRoundBtn">New Round</button>
+
+  <section class="practice-layout">
+    <section class="chatbox">
+      <h2>Chat</h2>
+      <div id="chatMessages"></div>
+    </section>
+
+    <section class="main-practice">
+      <section class="info">
+        <div class="eye-container">
+          <img id="eyeImage" alt="Eye State">
+        </div>
+      </section>
+      <section class="arena-wrapper">
+        <div id="topArena" class="arena"></div>
+        <div id="bottomArena" class="arena"></div>
+      </section>
+
+      <section class="input-area">
+        <input id="rowInput" type="text" placeholder="e.g. 483 347" />
+        <button id="submitBtn">Submit Row</button>
+      </section>
+
+      <p id="feedback"></p>
+    </section>
+  </section>
+
+</main>
+
+<script type="module" src="/src/browser.js"></script>
+</body>
+</html>
